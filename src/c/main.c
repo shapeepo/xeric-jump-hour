@@ -79,8 +79,7 @@ static void canvas_update_proc(Layer *layer, GContext *ctx) {
     int outer_R    = arc_cy - 32;
     if (outer_R < 20) outer_R = 20;
 
-    // Uniform arc-length per minute: straight_h = π/4 × outer_R  (π/4 ≈ 785/1000)
-    int straight_h = outer_R * 785 / 1000;
+    int straight_h = outer_R;
 
     int tick_major = 20;
     int tick_minor = 20;
@@ -135,20 +134,44 @@ static void canvas_update_proc(Layer *layer, GContext *ctx) {
     // ═════════════════════════════════════════════════════════
     // 4. TICK MARKS — pill-shaped path, all pointing toward arc_cy
     // ═════════════════════════════════════════════════════════
+    // Diagonal for straight sections: dy capped to (spacing-1) so no tick
+    // inner-end ever overlaps the next tick's outer-end.
+    int tick_sep  = (straight_h > 0) ? straight_h / 10 : 5;
+    int diag_dy   = (tick_sep > 1) ? -(tick_sep - 1) : 0;
+    int diag_dx   = isqrt_i(tick_major * tick_major - diag_dy * diag_dy);
+
     for (int i = 0; i <= 60; i++) {
         bool is_major = (i % 5 == 0);
         int  tlen     = is_major ? tick_major : tick_minor;
 
         GPoint outer = gauge_outer(cx, arc_cy, outer_R, straight_h, i);
+        GPoint inner;
 
-        // Direction from outer point toward arc center
-        int ddx = cx     - outer.x;
-        int ddy = arc_cy - outer.y;
-        int mag = isqrt_i(ddx * ddx + ddy * ddy);
-        if (mag == 0) continue;
-
-        GPoint inner = GPoint(outer.x + tlen * ddx / mag,
-                              outer.y + tlen * ddy / mag);
+        if (i < 6) {
+            // Left straight: pure diagonal
+            inner = GPoint(outer.x + diag_dx, outer.y + diag_dy);
+        } else if (i < 10) {
+            // Left blend: interpolate from diagonal angle (i=5) to horizontal (i=10)
+            int blend_dx = diag_dx + (tick_major - diag_dx) * (i - 5) / 5;
+            int blend_dy = diag_dy * (10 - i) / 5;
+            inner = GPoint(outer.x + blend_dx, outer.y + blend_dy);
+        } else if (i <= 50) {
+            // Arc: radial toward (cx, arc_cy)
+            int ddx = cx     - outer.x;
+            int ddy = arc_cy - outer.y;
+            int mag = isqrt_i(ddx * ddx + ddy * ddy);
+            if (mag == 0) continue;
+            inner = GPoint(outer.x + tlen * ddx / mag,
+                           outer.y + tlen * ddy / mag);
+        } else if (i <= 54) {
+            // Right blend: interpolate from horizontal (i=50) to diagonal angle (i=55)
+            int blend_dx = -(tick_major - (tick_major - diag_dx) * (i - 50) / 5);
+            int blend_dy = diag_dy * (i - 50) / 5;
+            inner = GPoint(outer.x + blend_dx, outer.y + blend_dy);
+        } else {
+            // Right straight: pure diagonal (mirrored)
+            inner = GPoint(outer.x - diag_dx, outer.y + diag_dy);
+        }
 
         graphics_context_set_stroke_color(ctx, is_major ? PBL_IF_COLOR_ELSE(GColorMediumAquamarine, GColorWhite) : GColorWhite);
         graphics_context_set_stroke_width(ctx, is_major ? 2 : 1);
@@ -235,11 +258,11 @@ static void canvas_update_proc(Layer *layer, GContext *ctx) {
         snprintf(hour_buf, sizeof(hour_buf), "%d", display_hour);
 
         GFont font_hour = (hour_r >= 30)
-            ? fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD)
+            ? fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD)
             : (hour_r >= 17)
                 ? fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD)
                 : fonts_get_system_font(FONT_KEY_GOTHIC_14);
-        int text_h = (hour_r >= 30) ? 26 : (hour_r >= 17) ? 20 : 16;
+        int text_h = (hour_r >= 30) ? 30 : (hour_r >= 17) ? 20 : 16;
         GRect hour_rect = GRect(cx - hour_r + 4, hour_cy - text_h / 2,
                                 (hour_r - 4) * 2, text_h);
         graphics_context_set_text_color(ctx, PBL_IF_COLOR_ELSE(GColorMediumAquamarine, GColorWhite));
