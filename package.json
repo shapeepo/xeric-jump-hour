@@ -1,0 +1,17 @@
+{
+  "name": "xeric-jump-hour",
+  "author": "Shapeepo",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "Xeric Jump Hour",
+    "uuid": "bb197431-d705-47c2-af6b-65e6592fb5e2",
+    "sdkVersion": "3",
+    "enableMultiJS": false,
+    "targetPlatforms": ["aplite", "basalt", "chalk", "diorite", "emery", "flint", "gabbro"],
+    "watchapp": { "watchface": true },
+    "resources": { "media": [] }
+  }
+}
