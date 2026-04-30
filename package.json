@@ -12,6 +12,10 @@
     "enableMultiJS": false,
     "targetPlatforms": ["aplite", "basalt", "chalk", "diorite", "emery", "flint", "gabbro"],
     "watchapp": { "watchface": true },
-    "resources": { "media": [] }
+    "resources": {
+      "media": [
+        { "type": "png", "name": "IMAGE_MENU_ICON", "file": "icon_25x25.png", "menuIcon": true }
+      ]
+    }
   }
 }
