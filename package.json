@@ -1,21 +1,39 @@
 {
-  "name": "xeric-jump-hour",
-  "author": "Shapeepo",
-  "version": "1.0.0",
-  "keywords": ["pebble-app"],
-  "private": true,
-  "dependencies": {},
-  "pebble": {
-    "displayName": "Xeric Jump Hour",
-    "uuid": "bb197431-d705-47c2-af6b-65e6592fb5e2",
-    "sdkVersion": "3",
-    "enableMultiJS": false,
-    "targetPlatforms": ["aplite", "basalt", "chalk", "diorite", "emery", "flint", "gabbro"],
-    "watchapp": { "watchface": true },
-    "resources": {
-      "media": [
-        { "type": "png", "name": "IMAGE_MENU_ICON", "file": "icon_25x25.png", "menuIcon": true }
-      ]
-    }
-  }
+    "author": "Shapeepo",
+    "dependencies": {},
+    "keywords": [
+        "pebble-app"
+    ],
+    "name": "xeric-jump-hour",
+    "pebble": {
+        "displayName": "Xeric Jump Hour",
+        "enableMultiJS": false,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/icon_25x25.png",
+                    "menuIcon": true,
+                    "name": "IMAGE_MENU_ICON",
+                    "type": "png"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "emery",
+            "gabbro",
+            "flint"
+        ],
+        "uuid": "bb197431-d705-47c2-af6b-65e6592fb5e2",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.1.0"
 }
