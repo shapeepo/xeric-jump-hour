@@ -11,14 +11,7 @@
         "messageKeys": [],
         "projectType": "native",
         "resources": {
-            "media": [
-                {
-                    "file": "images/icon_25x25.png",
-                    "menuIcon": true,
-                    "name": "IMAGE_MENU_ICON",
-                    "type": "png"
-                }
-            ]
+            "media": []
         },
         "sdkVersion": "3",
         "targetPlatforms": [
